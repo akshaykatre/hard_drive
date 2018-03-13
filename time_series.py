@@ -9,7 +9,7 @@ below script lets you make a time series predicitons using ARIMA
 '''
 
 
-from pandas import read_csv
+from pandas import read_csv, DataFrame
 from pandas import datetime
 from matplotlib import pyplot
 from pandas.tools.plotting import autocorrelation_plot
