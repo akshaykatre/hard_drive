@@ -52,7 +52,7 @@ def test_stationary(timeseries):
 
 smart_features_raw = [x for x in data.columns if "smart" in x and "raw" in x]
 ## From wiki, most important features
-for i in [200, 201, 220, 222, 223, 224,225, 226, 250, 251,252, 254, 255, 195, 22, 11]:
+for i in [188, 200, 201, 220, 222, 223, 224,225, 226, 250, 251,252, 254, 255, 195, 22, 11]:
     try:
         smart_features_raw.remove('smart_'+str(i)+'_raw')
     except ValueError: 
@@ -134,9 +134,18 @@ plt.step(time_treatment_high, survival_prob_treatment_high, where="post",
 
 plt.show()
 
+## Fixes for work machine - lets hope it works! 
+data_numeric = data_x.select_dtypes(include=['category', 'float64'])
 
-data_numeric = data_x.select_dtypes('float64')
+# data_numeric = data_x.select_dtypes('float64')
 data_numeric = data_numeric.drop('failure', axis=1)
+
+rows_to_convert = ['smart_240_raw', 'smart_241_raw',
+                    'smart_242_raw', 'smart_7_raw', 
+                ]
+for row in rows_to_convert: 
+    data_numeric[row] = np.log(data_numeric[row])
+
 
 np.random.seed(42)
 msk = np.random.rand(len(data_numeric)) < 0.8
@@ -151,6 +160,12 @@ estimator.fit(train[smart_features_raw[:3]], train_d)
 estimator.score(train[smart_features_raw[:3]], train_d)
 estimator.score(test[smart_features_raw[:3]], test_d)
 
+
+
+
 ## Now the problems remain that I cannot use all the 
 ## columns that I want to use - and of course the prediction
 ## is quite bad because I only use a couple of rows
+
+## The Cox model loses its gradient after a few iterations 
+## need to have it fixed somehow! 
